@@ -1,0 +1,59 @@
+import openai
+import json
+
+Model = "gpt-3.5-turbo-0613"
+openai.api_key = "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"
+MAX_TOKEN = 50
+
+def generate_function_schema():
+    functions = [
+        {
+            "name":"get_nutrition",
+            "description":"get food nutrition",
+            "parameters": {
+                "type":"object",
+                "properties": {
+                    "calories": {
+                        "type":"string",
+                        "description":"amount of calories",
+                    },
+                    "fats": {
+                        "type":"string",
+                        "description": "amount of fats in grams",
+                    },
+                     "protein": {
+                        "type":"string",
+                        "description": "amount of protein in grams",
+                    },
+                },
+            "required":["calories", "fats", "protein"]
+            },
+        }
+    ]
+    return functions
+
+def request_to_ai(model, messages, functions, max_token):
+    response = openai.ChatCompletion.create(
+        model = Model,
+        messages = messages,
+        functions = functions,
+        function_call = "auto",
+        max_token = max_token
+    )
+    return response["choices"][0]["message"]
+
+def response_to_function_call(model, messages, max_token, response):
+    
+
+def generate_initial_messages():
+    return [{"role":"user", "content":"Get the estimate nutrition value of sate ayam in sate khas senayan"}]
+
+def run_program():
+    messages = generate_initial_messages()
+    functions_schema = generate_function_schema()
+
+    while True:
+        first_response = request_to_ai(Model, messages, functions_schema, MAX_TOKEN)
+        if first_response.get("function_call"):
+            
+        else:
